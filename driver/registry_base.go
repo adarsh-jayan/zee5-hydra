@@ -169,13 +169,13 @@ func (m *RegistryBase) AuditLogger() *logrusx.Logger {
 }
 
 func (m *RegistryBase) ClientHasher() fosite.Hasher {
-	if m.fh == nil {
-		if m.Tracer(context.TODO()).IsLoaded() {
-			m.fh = &tracing.TracedBCrypt{WorkFactor: m.C.BCryptCost()}
-		} else {
-			m.fh = x.NewBCrypt(m.C)
-		}
-	}
+	// if m.fh == nil {
+	// 	if m.Tracer(context.TODO()).IsLoaded() {
+	// 		m.fh = &tracing.TracedBCrypt{WorkFactor: m.C.BCryptCost()}
+	// 	} else {
+	// 		m.fh = x.NewBCrypt(m.C)
+	// 	}
+	// }
 	return m.fh
 }
 

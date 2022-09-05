@@ -122,4 +122,4 @@ services:
       - 5555:5555 # Port for hydra token user
     networks:
       - intranet
-    cpus: 1
+    cpus: 2

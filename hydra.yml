@@ -1,0 +1,51 @@
+## ORY Hydra Configuration
+version: v1.11.8
+
+serve:
+  public:
+    cors:
+      enabled: true
+
+dsn: postgres://ory_poc_appuser:RsQDTHw%21r%3BBk.5%3F@zee5-ory-poc-pt.cmhqqloxmare.ap-south-1.rds.amazonaws.com:5432/zee5orypoc?sslmode=disable&max_conns=100&max_idle_conns=20
+oidc:
+  subject_identifiers:
+    supported_types:
+      - public
+      # - pairwise
+    pairwise:
+      salt: youReallyNeedToChangeThis
+
+urls:
+  login: http://localhost:4455/login
+  consent: http://localhost:4455/auth/consent
+  logout: http://localhost:4455/logout
+  error: http://localhost:4455/error
+  self:
+    public: http://localhost:4444/
+    issuer: http://localhost:4444/
+
+strategies:
+  access_token: jwt
+
+ttl:
+  access_token: 1h
+  refresh_token: 5h
+  id_token: 1h
+  auth_code: 1h
+
+oauth2:
+  expose_internal_errors: true
+  hashers:
+    bcrypt:
+      cost: 4
+
+secrets:
+  cookie:
+    - youReallyNeedToChangeThis
+  system:
+    - youReallyNeedToChangeThis
+
+log:
+  leak_sensitive_values: true
+  level: debug
+

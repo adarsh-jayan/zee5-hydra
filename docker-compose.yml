@@ -1,0 +1,124 @@
+version: '3.7'
+
+networks:
+  intranet:
+    driver: bridge
+
+services:
+  # kratos-migrate:
+  #   container_name: kratos-migrate
+  #   image: oryd/kratos:v0.10.1
+  #   # to run db migrations we use the kratos-cli but don't need to mount the config directory
+  #   environment:
+  #     - DSN=postgres://postgres:arjprd12@host.docker.internal:5432/ory?sslmode=disable&max_conns=20&max_idle_conns=4
+  #   command: migrate sql -e --yes
+  #   networks:
+  #     - intranet
+
+  # hydra-migrate:
+  #   depends_on:
+  #     # - auth-db
+  #     - kratos-migrate
+  #   container_name: hydra-migrate
+  #   image: oryd/hydra:v1.11.8
+  #   environment:
+  #     - DSN=postgres://postgres:arjprd12@host.docker.internal:5432/ory?sslmode=disable&max_conns=20&max_idle_conns=4
+  #     # - SECRETS_SYSTEM=youReallyNeedToChangeThis
+  #   restart: on-failure
+  #   command: migrate sql -e --yes
+  #   networks:
+  #     - intranet
+
+  # hydra:
+  #   container_name: hydra
+  #   image: oryd/hydra:v1.11.8
+  #   # depends_on:
+  #     # - auth-db
+  #     # - hydra-migrate
+  #   ports:
+  #     - 4444:4444 # Public port
+  #     - 4445:4445 # Admin port
+  #     - 5555:5555 # Port for hydra token user
+  #   command:
+  #     serve -c /etc/hydra/config/hydra.yml all --dangerous-force-http
+  #   restart: on-failure # TODO figure out why we need this (incorporate health check into hydra migrate command?)
+  #   networks:
+  #     - intranet
+  #   volumes:
+  #     - type: bind
+  #       source: ./config
+  #       target: /etc/hydra/config
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpu_count: 1
+    #       memory: 1024M
+    #     reservations:
+    #       cpu_count: 1
+    #       memory: 1024M
+    # cpus: 1.5
+    # mem_limit: 1024M
+  # kratos:
+  #   container_name: kratos
+  #   # depends_on:
+  #     # - kratos-migrate
+  #   image: oryd/kratos:v0.10.1
+  #   # watch-courier is set for sending verification/recovery emails
+  #   command: serve -c /etc/kratos/config/kratos.yml --dev --watch-courier
+  #   volumes:
+  #     - type: bind
+  #       source: ./config
+  #       target: /etc/kratos/config
+  #     - type: bind
+  #       source: ./identity-schemas
+  #       target: /etc/kratos/identity-schemas
+  #   ports:
+  #     - 4433:4433 # public
+  #     - 4434:4434 # admin
+  #   networks:
+  #     - intranet
+    # deploy:
+    #   resources:
+    #     cpu_count: 1
+    #     limits:
+    #       cpu_count: 1
+    #       memory: 1024M
+    #     reservations:
+    #       cpu_count: 1
+    #       memory: 1024M
+    # cpus: 1.5
+    # mem_limit: 1024M
+  # auth-db:
+  #   image: postgres:alpine
+  #   container_name: auth-db
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - POSTGRES_USER=auth
+  #     - POSTGRES_PASSWORD=secret
+  #     - POSTGRES_DB=auth
+  #   networks:
+  #     - intranet
+
+  # mailslurper:
+  #   image: oryd/mailslurper:latest-smtps
+  #   container_name: mailserver
+  #   ports:
+  #     - 4436:4436
+  #     - 4437:4437
+  #   networks:
+  #     - intranet
+
+  hydra:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: hydra
+    # volumes:
+    #   - $PWD:/src
+    ports:
+      - 4444:4444 # Public port
+      - 4445:4445 # Admin port
+      - 5555:5555 # Port for hydra token user
+    networks:
+      - intranet
